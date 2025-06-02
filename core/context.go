@@ -14,6 +14,8 @@ type Context struct {
 	Request   *http.Request
 	Params    map[string]string
 	DebugMode bool
+	handlers  []HandlerFunc
+	index     int
 }
 
 func NewContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -78,4 +80,17 @@ func (c *Context) DebugInfo() {
 	}
 
 	fmt.Println(Bold + Cyan + "└───────────────────────" + Reset)
+}
+
+func (c *Context) Next() {
+	c.index++
+	for c.index < len(c.handlers) {
+		c.handlers[c.index](c)
+		c.index++
+	}
+}
+
+func (c *Context) SetHandlers(h []HandlerFunc) {
+	c.handlers = h
+	c.index = -1
 }

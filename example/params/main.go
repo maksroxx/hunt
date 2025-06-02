@@ -23,9 +23,10 @@ func main() {
 		c.JSON(200, map[string]string{"user_id": id})
 	})
 
-	r.DELETE("/users/:id", func(c *hunt.Context) {
+	r.DELETE("/users/:id/:name", func(c *hunt.Context) {
 		id := c.Param("id")
-		c.String(200, "Deleted user "+id)
+		name := c.Param("name")
+		c.String(200, "Deleted user with id: "+id+", name: "+name)
 	})
 
 	r.Run(":8080")

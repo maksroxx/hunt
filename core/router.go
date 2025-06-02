@@ -18,10 +18,18 @@ func NewRouter() *Router {
 	}
 }
 
-func (r *Router) AddRoute(method, pattern string, handler HandlerFunc) {
+func (r *Router) AddRoute(method, pattern string, handlers ...HandlerFunc) {
 	key := method + "-" + pattern
-	r.handlers[key] = handler
+	r.handlers[key] = combineHandlers(handlers)
 	r.routes[key] = strings.Split(pattern, "/")
+}
+
+func combineHandlers(handlers []HandlerFunc) HandlerFunc {
+	return func(c *Context) {
+		for _, h := range handlers {
+			h(c)
+		}
+	}
 }
 
 func (r *Router) Handle(c *Context) {
